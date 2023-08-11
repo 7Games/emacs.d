@@ -1,6 +1,31 @@
-My Emacs config
+* emacs.d
 
 #+attr_html: :width 1000px
 [[./screenshot.png]]
 
+* Plugins
+** [[https://github.com/minad/corfu][Corfu]]
+Code Completion
 
+** [[https://github.com/skeeto/elfeed][Elfeed]]
+RSS Feed reader
+
+** [[https://github.com/emacs-evil/evil][Evil]]
+Vim emulation
+
+(evil only enables in programming modes)
+
+** [[https://github.com/Malabarba/beacon][Beacon]]
+Cursor finder
+
+** [[https://github.com/nonsequitur/smex][Smex]]
+M-x enhancement
+
+** [[https://github.com/pft/mingus][Mingus]]
+MPD Client
+
+** [[https://github.com/minad/org-modern][Org-modern]]
+Makes org-mode look more modern
+
+** [[https://github.com/magit/magit][Magit]]
+The magic git client
