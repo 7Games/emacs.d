@@ -1,0 +1,8 @@
+* emacs.d
+
+My Emacs config
+
+#+attr_html: :width 600px
+[[./screenshot.png]]
+
+
