@@ -17,8 +17,6 @@ RSS Feed reader
 ** [[https://github.com/emacs-evil/evil][Evil]]
 Vim emulation
 
-(evil only enables in programming modes)
-
 ** [[https://github.com/Malabarba/beacon][Beacon]]
 Cursor finder
 
@@ -33,3 +31,6 @@ Makes org-mode look more modern
 
 ** [[https://github.com/magit/magit][Magit]]
 The magic git client
+
+** [[https://github.com/doomemacs/themes][Doom-themes]]
+For the "toyko night" theme
