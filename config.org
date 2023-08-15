@@ -140,6 +140,12 @@
   (kill-buffer "*Messages*")
 #+END_SRC
 
+** Enable eglot in programming languages
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'c-mode-hook 'eglot-ensure)
+  (add-hook 'c++-mode-hook 'eglot-ensure)
+#+END_SRC
+
 ** Only show errors
 #+BEGIN_SRC emacs-lisp
   (setq warning-minimum-level :emergency)
@@ -161,11 +167,6 @@
 #+END_SRC
 
 * Keybinds
-** Dired
-#+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "C-c d") 'dired)
-#+END_SRC
-
 ** Allow selection with Shift+<arrow keys>
 #+BEGIN_SRC emacs-lisp
   (setq org-support-shift-select t)
@@ -177,13 +178,6 @@
   (require 'package)
   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
   (package-initialize)
-#+END_SRC
-
-** Enable eglot in programming languages
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'c-mode-hook 'eglot-ensure)
-  (add-hook 'c++-mode-hook 'eglot-ensure)
-  (add-hook 'emacs-lisp-mode-hook 'eglot-ensure)
 #+END_SRC
 
 ** Corfu, code completion
@@ -231,8 +225,6 @@ Stolen from https://github.com/Gavinok/emacs.d
     :config
     (load-file "~/.emacs.d/elfeed-feeds.el")
     (define-key elfeed-show-mode-map (kbd "C-x p") #'my/elfeed-play-link-in-mpv))
-
-  (global-set-key (kbd "C-c f") (lambda () (interactive) (elfeed) (elfeed-update)))
 #+END_SRC
 
 *** Takes in url and opens it in MPV
@@ -249,6 +241,41 @@ Stolen from https://github.com/Gavinok/emacs.d
     (interactive)
     (let ((link (elfeed-entry-link elfeed-show-entry)))
       (my/open-in-mpv link)))
+#+END_SRC
+
+** General
+#+BEGIN_SRC emacs-lisp
+  (use-package general
+    :ensure t
+    :after evil
+    :config
+    (general-evil-setup t)
+    (general-define-key
+     :states '(normal visual insert emacs)
+     :prefix "SPC"
+     :non-normal-prefix "C-SPC"
+     "ff"  'find-file
+     "fr"  'ranger
+     "fs"  'save-buffer
+     "kb"  'kill-buffer
+     "ke"  'kill-emacs
+     "rss" 'elfeed
+     "git" 'magit
+     "mus" 'mingus))
+#+END_SRC
+
+** Which-key
+#+BEGIN_SRC emacs-lisp
+  (use-package which-key
+    :ensure t
+    :config
+    (which-key-mode))
+#+END_SRC
+
+** Ranger
+#+BEGIN_SRC emacs-lisp
+  (use-package ranger
+    :ensure t)
 #+END_SRC
 
 ** Evil, vim keys for emacs
@@ -297,8 +324,6 @@ Stolen from https://github.com/Gavinok/emacs.d
     :ensure t
     :config
     (define-key mingus-playlist-mode-map (kbd "<delete>") #'mingus-del))
-
-  (global-set-key (kbd "C-c m") 'mingus)
 #+END_SRC
 
 ** Org-modern, make org-mode look good
@@ -314,8 +339,6 @@ Stolen from https://github.com/Gavinok/emacs.d
 #+BEGIN_SRC emacs-lisp
   (use-package magit
     :ensure t)
-  
-  (global-set-key (kbd "C-c g") 'magit)
 #+END_SRC
 
 ** Tokyo night theme
