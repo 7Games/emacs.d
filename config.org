@@ -108,8 +108,12 @@
 			:box `(:line-width 3 :color "#353535" :style nil))
 #+END_SRC
 
-** Set theme, font, and padding on every frame
+** Set theme, font, and padding
 #+BEGIN_SRC emacs-lisp
+  (load-theme 'doom-tokyo-night t)
+  (set-frame-font "Iosevka Comfy 13")
+  (set-frame-parameter (selected-frame) 'internal-border-width 13)
+  ;; For emacs-client
   (add-hook 'after-make-frame-functions
 	    (lambda (frame)
 	      (with-selected-frame frame
@@ -130,13 +134,6 @@
 #+END_SRC
 
 * Others
-** Prevent C-g from closing windows
-#+BEGIN_SRC emacs-lisp
-  (defadvice keyboard-escape-quit
-      (around keyboard-escape-quit-dont-close-windows activate)
-    (let ((buffer-quit-function (lambda () ())))
-      ad-do-it))
-#+END_SRC
 ** Kill messages buffer on startup
 #+BEGIN_SRC emacs-lisp
   (setq-default message-log-max nil)
@@ -158,7 +155,7 @@
   (setq initial-major-mode 'text-mode)
 #+END_SRC
 
-** Enable correct keybinds
+** Enable cua mode
 #+BEGIN_SRC emacs-lisp
   (cua-mode t)
 #+END_SRC
@@ -169,7 +166,7 @@
   (global-set-key (kbd "C-c d") 'dired)
 #+END_SRC
 
-** Allow selection with S+<arrow keys>
+** Allow selection with Shift+<arrow keys>
 #+BEGIN_SRC emacs-lisp
   (setq org-support-shift-select t)
 #+END_SRC
@@ -317,6 +314,8 @@ Stolen from https://github.com/Gavinok/emacs.d
 #+BEGIN_SRC emacs-lisp
   (use-package magit
     :ensure t)
+  
+  (global-set-key (kbd "C-c g") 'magit)
 #+END_SRC
 
 ** Tokyo night theme
@@ -325,3 +324,13 @@ Stolen from https://github.com/Gavinok/emacs.d
     :ensure t)
 #+END_SRC
 
+** Slime
+#+BEGIN_SRC emacs-lisp
+  (use-package slime
+    :ensure t
+    :config
+    (setq inferior-lisp-program "/bin/clisp")
+    (add-to-list 'load-path "/usr/share/emacs/site-lisp/slime/")
+    (require 'slime)
+    (slime-setup))
+#+END_SRC
