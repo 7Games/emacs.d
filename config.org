@@ -1,138 +1,6 @@
 #+TITLE: Emacs Configuration
 #+AUTHOR: Benjamin
 
-* Style
-** Enable smooth scrolling
-#+BEGIN_SRC emacs-lisp
-  (pixel-scroll-precision-mode)
-#+END_SRC
-
-** Enable file fuzzy finder
-#+BEGIN_SRC emacs-lisp
-  (setq ido-enable-flex-matching t)
-  (setq ido-everywhere t)
-  (ido-mode t)
-#+END_SRC
-
-** Show underlines at the descent line for variable-pitch fonts
-#+BEGIN_SRC emacs-lisp
-  (setq x-underline-at-descent-line t)
-#+END_SRC
-
-** Enable blinking cursor mode
-#+BEGIN_SRC emacs-lisp
-  (blink-cursor-mode 1)
-#+END_SRC
-
-** Set default line spacing to 0 pixels
-#+BEGIN_SRC emacs-lisp
-  (setq-default line-spacing 0)
-#+END_SRC
-
-** Display images in org-mode
-#+BEGIN_SRC emacs-lisp
-  (setq org-display-inline-images t)
-  (setq org-redisplay-inline-images t)
-  (setq org-startup-with-inline-images "inlineimages")
-#+END_SRC
-
-** Disable startup page
-#+BEGIN_SRC emacs-lisp
-  (setq inhibit-startup-screen t)
-  (setq inhibit-startup-echo-area-message t)
-  (setq inhibit-startup-message t)
-#+END_SRC
-
-** Change scratch buffer message
-#+BEGIN_SRC emacs-lisp
-  (setq initial-scratch-message ";;; GNU Emacs - the only editor that can save your soul\n\n")
-#+END_SRC
-
-** Disable all ugly UI
-#+BEGIN_SRC emacs-lisp
-  (tool-bar-mode   0)
-  (tooltip-mode    0)
-  (scroll-bar-mode 0)
-  (menu-bar-mode   0)
-#+END_SRC
-
-** Use tabs for indentation
-#+BEGIN_SRC emacs-lisp
-  (setq-default indent-tabs-mode t)
-#+END_SRC
-
-** Add padding around the window
-#+BEGIN_SRC emacs-lisp
-  (setq-default left-margin-width 2 right-margin-width 2)
-  (set-window-buffer nil (current-buffer))
-#+END_SRC
-
-** Custom modeline
-#+BEGIN_SRC emacs-lisp
-    (defun mode-line-render (left right)
-      "Return a string of `window-width' length.
-	  Containing LEFT, and RIGHT aligned respectively."
-      (let ((available-width
-	     (- (window-total-width)
-		(+ (length (format-mode-line left))
-		   (length (format-mode-line right))))))
-	(append left
-		(list (format (format "%%%ds" available-width) ""))
-		right)))
-
-  (setq-default header-line-format
-		'((:eval
-		   (mode-line-render
-		    ;; Left.
-		    (quote (
-			    ;; For evil-mode
-			    (:eval (when (bound-and-true-p evil-state)
-				     (cond
-				      ((eq evil-state 'visual) "[V] ")
-				      ((eq evil-state 'normal) "[N] ")
-				      ((eq evil-state 'insert) "[I] ")
-				      (t "* "))))
-			    "%b"
-			    (:eval (if (buffer-modified-p)
-				       (propertize " (modified)" 'face '(:foreground "#aaa"))
-				     ""))))
-		    ;; Right.
-		    (quote (
-			    "%l:%c [%m] "))))))
-
-    (setq header-line-format mode-line-format)
-    (setq-default mode-line-format nil)
-
-    (set-face-attribute 'header-line nil
-			:underline "white"
-			:box `(:line-width 3 :color "#353535" :style nil))
-#+END_SRC
-
-** Set theme, font, and padding
-#+BEGIN_SRC emacs-lisp
-  (load-theme 'doom-tokyo-night t)
-  (set-frame-font "Iosevka Comfy 13")
-  (set-frame-parameter (selected-frame) 'internal-border-width 13)
-  ;; For emacs-client
-  (add-hook 'after-make-frame-functions
-	    (lambda (frame)
-	      (with-selected-frame frame
-		(load-theme 'doom-tokyo-night t)
-		(set-frame-font "Iosevka Comfy 13")
-		(set-frame-parameter (selected-frame) 'internal-border-width 13))))
-#+END_SRC
-
-** Org mode
-*** Hide emphasis markers in org-mode
-#+BEGIN_SRC emacs-lisp
-  (setq org-hide-emphasis-markers t)
-#+END_SRC
-
-*** Disable confirmation for executing Elisp code in org-mode links
-#+BEGIN_SRC emacs-lisp
-  (setq org-confirm-elisp-link-function nil)
-#+END_SRC
-
 * Others
 ** Kill messages buffer on startup
 #+BEGIN_SRC emacs-lisp
@@ -144,11 +12,21 @@
 #+BEGIN_SRC emacs-lisp
   (add-hook 'c-mode-hook 'eglot-ensure)
   (add-hook 'c++-mode-hook 'eglot-ensure)
+  (add-hook 'python-base-mode-hook 'eglot-ensure)
+  (add-hook 'lua-base-mode-hook 'eglot-ensure)
+  (add-hook 'rust-base-mode-hook 'eglot-ensure)
 #+END_SRC
 
 ** Only show errors
 #+BEGIN_SRC emacs-lisp
   (setq warning-minimum-level :emergency)
+#+END_SRC
+
+** Set garbage collection
+#+BEGIN_SRC emacs-lisp
+  (setq
+    gc-cons-threshold 402653184
+    gc-cons-percentage 0.6)
 #+END_SRC
 
 ** Disable backup files
@@ -164,6 +42,11 @@
 ** Enable cua mode
 #+BEGIN_SRC emacs-lisp
   (cua-mode t)
+#+END_SRC
+
+** Personal stuff
+#+BEGIN_SRC emacs-lisp
+  (org-babel-load-file "~/.emacs.d/personal.org")
 #+END_SRC
 
 * Keybinds
@@ -218,85 +101,13 @@ Stolen from https://github.com/Gavinok/emacs.d
 		(corfu-mode))))
 #+END_SRC
 
-** Elfeed, rss feed for emacs
-#+BEGIN_SRC emacs-lisp
-  (use-package elfeed
-    :ensure t
-    :config
-    (load-file "~/.emacs.d/elfeed-feeds.el")
-    (define-key elfeed-show-mode-map (kbd "C-x p") #'my/elfeed-play-link-in-mpv))
-#+END_SRC
-
-*** Takes in url and opens it in MPV
-#+BEGIN_SRC emacs-lisp
-  (defun my/open-in-mpv (url)
-    "Watch a video from URL in MPV"
-    (start-process "mpv" "mpv-buffer" "mpv" url))
-#+END_SRC
-
-*** Open current elfeed entry in MPV
-#+BEGIN_SRC emacs-lisp
-  (defun my/elfeed-play-link-in-mpv ()
-    "Play the link of the current entry in mpv."
-    (interactive)
-    (let ((link (elfeed-entry-link elfeed-show-entry)))
-      (my/open-in-mpv link)))
-#+END_SRC
-
-** General
-#+BEGIN_SRC emacs-lisp
-  (use-package general
-    :ensure t
-    :after evil
-    :config
-    (general-evil-setup t)
-    (general-define-key
-     :states '(normal visual insert emacs)
-     :prefix "SPC"
-     :non-normal-prefix "C-SPC"
-     "ff"  'find-file
-     "fr"  'ranger
-     "fs"  'save-buffer
-     "kb"  'kill-buffer
-     "ke"  'kill-emacs
-     "rss" 'elfeed
-     "git" 'magit
-     "mus" 'mingus))
-#+END_SRC
-
-** Which-key
-#+BEGIN_SRC emacs-lisp
-  (use-package which-key
-    :ensure t
-    :config
-    (which-key-mode))
-#+END_SRC
-
-** Ranger
-#+BEGIN_SRC emacs-lisp
-  (use-package ranger
-    :ensure t)
-#+END_SRC
-
 ** Evil, vim keys for emacs
 #+BEGIN_SRC emacs-lisp
   (use-package evil
     :ensure t
     :init (setq evil-want-C-i-jump nil)
     :config
-    (evil-mode)
-    ;; Disable evil-mode in elfeed
-    (evil-set-initial-state 'elfeed-search-mode 'emacs)
-    (evil-set-initial-state 'elfeed-show-mode 'emacs))
-#+END_SRC
-
-** Show line numbers when in a programming mode
-#+BEGIN_SRC emacs-lisp
-  (defun my/prog-mode ()
-    "Enable line numbers in programming modes."
-    (setq display-line-numbers 'relative))
-
-  (add-hook 'prog-mode-hook 'my/prog-mode)
+    (evil-mode))
 #+END_SRC
 
 ** Beacon, cursor finder
@@ -318,20 +129,11 @@ Stolen from https://github.com/Gavinok/emacs.d
   (global-set-key (kbd "M-X") 'smex-major-mode-commands)
 #+END_SRC
 
-** Mingus, mpd client for emacs
-#+BEGIN_SRC emacs-lisp
-  (use-package mingus
-    :ensure t
-    :config
-    (define-key mingus-playlist-mode-map (kbd "<delete>") #'mingus-del))
-#+END_SRC
-
 ** Org-modern, make org-mode look good
 #+BEGIN_SRC emacs-lisp
   (use-package org-modern
     :ensure t
     :config
-    (define-key mingus-playlist-mode-map (kbd "<delete>") #'mingus-del)
     (with-eval-after-load 'org (global-org-modern-mode)))
 #+END_SRC
 
@@ -347,13 +149,134 @@ Stolen from https://github.com/Gavinok/emacs.d
     :ensure t)
 #+END_SRC
 
-** Slime
+* Style
+** Enable smooth scrolling
 #+BEGIN_SRC emacs-lisp
-  (use-package slime
-    :ensure t
-    :config
-    (setq inferior-lisp-program "/bin/clisp")
-    (add-to-list 'load-path "/usr/share/emacs/site-lisp/slime/")
-    (require 'slime)
-    (slime-setup))
+  (pixel-scroll-precision-mode)
+#+END_SRC
+
+** Enable file fuzzy finder
+#+BEGIN_SRC emacs-lisp
+  (setq ido-enable-flex-matching t)
+  (setq ido-everywhere t)
+  (ido-mode t)
+#+END_SRC
+
+** Show underlines at the descent line for variable-pitch fonts
+#+BEGIN_SRC emacs-lisp
+  (setq x-underline-at-descent-line t)
+#+END_SRC
+
+** Show line numbers when in a programming mode
+#+BEGIN_SRC emacs-lisp
+  (defun my/prog-mode ()
+    "Enable line numbers in programming modes."
+    (setq display-line-numbers 'relative))
+
+  (add-hook 'prog-mode-hook 'my/prog-mode)
+#+END_SRC
+
+** Enable blinking cursor mode
+#+BEGIN_SRC emacs-lisp
+  (blink-cursor-mode 1)
+#+END_SRC
+
+** Set default line spacing to 0 pixels
+#+BEGIN_SRC emacs-lisp
+  (setq-default line-spacing 0)
+#+END_SRC
+
+** Display images in org-mode
+#+BEGIN_SRC emacs-lisp
+  (setq-default org-display-inline-images t)
+  (setq-default org-redisplay-inline-images t)
+  (setq-default org-startup-with-inline-images "inlineimages")
+#+END_SRC
+
+** Disable startup page
+#+BEGIN_SRC emacs-lisp
+  (setq inhibit-startup-screen t)
+  (setq inhibit-startup-echo-area-message t)
+  (setq inhibit-startup-message t)
+#+END_SRC
+
+** Change scratch buffer message
+#+BEGIN_SRC emacs-lisp
+  (setq initial-scratch-message ";;; GNU Emacs - the only editor that can save your soul\n\n")
+#+END_SRC
+
+** Disable all ugly UI
+#+BEGIN_SRC emacs-lisp
+  (tool-bar-mode   0)
+  (tooltip-mode    0)
+  (scroll-bar-mode 0)
+  (menu-bar-mode   0)
+#+END_SRC
+
+** Custom modeline
+#+BEGIN_SRC emacs-lisp
+    (defun mode-line-render (left right)
+      "Return a string of `window-width' length.
+	  Containing LEFT, and RIGHT aligned respectively."
+      (let ((available-width
+	     (- (window-total-width)
+		(+ (length (format-mode-line left))
+		   (length (format-mode-line right))))))
+	(append left
+		(list (format (format "%%%ds" available-width) ""))
+		right)))
+
+  (setq-default header-line-format
+		'((:eval
+		   (mode-line-render
+		    ;; Left.
+		    (quote (
+			    ;; For evil-mode
+			    (:eval (when (bound-and-true-p evil-state)
+				     (cond
+				      ((eq evil-state 'visual) "[V] ")
+				      ((eq evil-state 'normal) "[N] ")
+				      ((eq evil-state 'insert) "[I] ")
+				      (t "* "))))
+			    "%b"
+			    (:eval (if (buffer-modified-p)
+				       (propertize " (modified)" 'face '(:foreground "#aaa"))
+				     ""))))
+		    ;; Right.
+		    (quote (
+			    "%l:%c [%m] "))))))
+
+    (setq header-line-format mode-line-format)
+    (setq-default mode-line-format nil)
+
+    (set-face-attribute 'header-line nil
+			:underline "white"
+			:box `(:line-width 3 :color "#353535" :style nil))
+#+END_SRC
+
+** Set theme, font, and padding
+#+BEGIN_SRC emacs-lisp
+  (load-theme 'doom-tokyo-night t)
+  (set-frame-font "Iosevka Comfy 13")
+  (set-frame-parameter (selected-frame) 'internal-border-width 13)
+  ;; For emacs-client
+  (add-hook 'after-make-frame-functions
+	    (lambda (frame)
+	      (with-selected-frame frame
+		(load-theme 'doom-tokyo-night t)
+		(set-frame-font "Iosevka Comfy 13")
+		(setq-default left-margin-width 2 right-margin-width 2)
+		(set-window-buffer nil (current-buffer))
+		(set-frame-parameter (selected-frame) 'internal-border-width 13))))
+#+END_SRC
+
+** Org mode
+*** Hide emphasis markers in org-mode
+#+BEGIN_SRC emacs-lisp
+  (setq org-hide-emphasis-markers t)
+#+END_SRC
+
+*** Disable confirmation for executing Elisp code in org-mode links
+#+BEGIN_SRC emacs-lisp
+  (setq org-confirm-elisp-link-function nil)
 #+END_SRC
