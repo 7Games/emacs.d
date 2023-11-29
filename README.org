@@ -6,3 +6,6 @@
 
 #+attr_html: :width 1000px
 [[./screenshot.png]]
+
+Font used:
+https://git.sr.ht/~protesilaos/iosevka-comfy

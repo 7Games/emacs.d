@@ -1,0 +1,42 @@
+#+TITLE: Keybinds Configuration
+#+AUTHOR: Benjamin
+
+* Alt+<ARROW KEY> to move lines
+#+BEGIN_SRC emacs-lisp
+  (defmacro my/save-column (&rest body)
+    "Move cursor back to current column"
+    `(let ((column (current-column)))
+       (unwind-protect
+           (progn ,@body)
+         (move-to-column column))))
+  (put 'save-column 'lisp-indent-function 0)
+
+  (defun my/move-line-up ()
+    "Move text line up"
+    (interactive)
+    (my/save-column
+      (transpose-lines 1)
+      (forward-line -2)))
+
+  (defun my/move-line-down ()
+    "Move text line down"
+    (interactive)
+    (my/save-column
+      (forward-line 1)
+      (transpose-lines 1)
+      (forward-line -1)))
+
+  (global-set-key (kbd "M-<up>") 'my/move-line-up)
+  (global-set-key (kbd "M-<down>") 'my/move-line-down)
+#+END_SRC
+
+* Allow selection with Shift+arrow keys
+#+BEGIN_SRC emacs-lisp
+  (setq org-support-shift-select t)
+#+END_SRC
+
+* Enable correct keybinds
+#+BEGIN_SRC emacs-lisp
+  (cua-mode t)
+#+END_SRC
+

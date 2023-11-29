@@ -1,0 +1,12 @@
+#+TITLE: Other Configuration
+#+AUTHOR: Benjamin
+
+* Show line numbers when in a programming mode
+#+BEGIN_SRC emacs-lisp
+  (defun my/prog-mode ()
+    "Enable line numbers and evil-mode in programming modes."
+    (setq display-line-numbers 'relative))
+
+  (add-hook 'prog-mode-hook 'my/prog-mode)
+#+END_SRC
+

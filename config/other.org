@@ -1,0 +1,18 @@
+#+TITLE: Other Configuration
+#+AUTHOR: Benjamin
+
+* Disable backup files
+#+BEGIN_SRC emacs-lisp
+  (setq make-backup-files nil)
+#+END_SRC
+
+* Set the initial major mode for new buffers to 'text-mode'
+#+BEGIN_SRC emacs-lisp
+  (setq initial-major-mode 'text-mode)
+#+END_SRC
+
+* Setup ZONE
+#+BEGIN_SRC emacs-lisp
+  (setq zone-timer (run-with-idle-timer 90 t 'zone))
+#+END_SRC
+
